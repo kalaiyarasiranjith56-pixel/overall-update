@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metro Connect Services | Performance Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">MC</div><div><strong>METRO CONNECT</strong><span>Services Performance</span></div></div>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav-item active" data-page="input"><span>＋</span> Input Page</button>
+    <button class="nav-item" data-page="data"><span>▦</span> Consolidation Sheet</button>
+    <button class="nav-item" data-page="dashboard"><span>◫</span> Visualization</button>
+    <div class="sidebar-bottom"><div class="status-dot"></div><div><strong>Excel data source</strong><small>Persistent local workbook</small></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><div class="eyebrow">OPERATIONS / PERFORMANCE</div><h1 id="page-title">Daily Data Entry</h1></div><div class="top-actions"><span class="live-pill"><i></i> Connected to workbook</span><a class="btn btn-light" href="/api/export">⇩ Export Excel</a></div></header>
+
+    <section class="page active" id="page-input">
+      <div class="page-intro"><div><h2>Input Page</h2><p>Enter daily figures. Saved values go directly into the central Consolidation Sheet.</p></div><div class="info-chip">01 <span>MANUAL ENTRY</span></div></div>
+      <div class="panel form-panel">
+        <div class="panel-heading"><div><h3>Daily performance entry</h3><p>Choose a date and fill in the available metrics. Leave unreported values blank.</p></div><span class="required-note">* Required: date and at least one value</span></div>
+        <div class="form-toolbar"><label class="field date-field"><span>Record date <b>*</b></span><input type="date" id="entry-date"></label><button class="btn btn-light" id="load-date">Load existing date</button><label class="toggle-label"><input type="checkbox" id="edit-mode"> Edit existing values</label></div>
+        <div class="domain-admin panel-soft"><div><strong>Manage domains</strong><p>Add a new domain or enable/disable any existing domain. Disabling never deletes history.</p></div><form id="add-domain-form"><input id="new-domain-name" maxlength="80" placeholder="New domain name (e.g., Guindy Metro)" required><button class="btn btn-primary" type="submit">+ Add domain</button></form><div id="domain-admin-message" class="message" role="status"></div></div><div id="entry-groups" class="entry-groups"><div class="loading">Loading workbook fields…</div></div>
+        <div class="form-footer"><div id="entry-message" class="message" role="status"></div><div class="button-row"><button class="btn btn-light" id="clear-form">Clear form</button><button class="btn btn-primary" id="save-entry">Save daily data <span>→</span></button></div></div>
+      </div>
+      <div class="note-card"><span class="note-icon">i</span><div><strong>Data integrity</strong><p>Existing date + service + metric combinations are protected from accidental duplicates. Enable “Edit existing values” before saving corrections.</p></div></div>
+    </section>
+
+    <section class="page" id="page-data">
+      <div class="page-intro"><div><h2>Consolidation Sheet</h2><p>The central source of truth for historical and newly entered records.</p></div><div class="info-chip">02 <span>CENTRAL RECORDS</span></div></div>
+      <div class="stat-strip"><div><span>Total records</span><strong id="record-count">—</strong></div><div><span>Historical date span</span><strong id="record-span">—</strong></div><div><span>Storage</span><strong>Excel workbook</strong></div></div>
+      <div class="panel table-panel"><div class="panel-heading"><div><h3>Records table</h3><p>Search, correct, or delete a record. Cumulative values recalculate after each change.</p></div><button class="btn btn-light" id="refresh-records">↻ Refresh</button></div>
+        <div class="table-filters"><input id="search-records" type="search" placeholder="Search date, service, metric, remarks…"><select id="table-year"><option value="">All years</option></select><select id="table-month"><option value="">All months</option></select><select id="table-service"><option value="">All services</option></select><select id="table-metric"><option value="">All metrics</option></select></div>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Service / Domain</th><th>Metric</th><th>Daily value</th><th>Cumulative</th><th>Remarks</th><th>Last updated</th><th>Actions</th></tr></thead><tbody id="records-body"><tr><td colspan="8" class="empty-cell">Loading records…</td></tr></tbody></table></div>
+        <div class="table-bottom"><span id="table-summary">—</span><div class="pager"><button class="btn btn-light btn-sm" id="prev-page">←</button><span id="page-indicator">1 / 1</span><button class="btn btn-light btn-sm" id="next-page">→</button></div></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-dashboard">
+      <div class="page-intro"><div><h2>Visualization & Filters</h2><p>Explore real historical and current records with synchronized charts and indicators.</p></div><div class="info-chip">03 <span>LIVE REPORTS</span></div></div>
+      <div class="panel filter-panel"><div class="panel-heading compact"><div><h3>Report filters</h3><p>All selections apply together.</p></div><button class="btn btn-light" id="reset-filters">↺ Reset filters</button></div>
+        <div class="filter-grid"><label><span>Specific date</span><input type="date" id="filter-date"></label><label><span>Month</span><select id="filter-month"><option value="">All months</option></select></label><label><span>Year</span><select id="filter-year"><option value="">All years</option></select></label><label><span>From date</span><input type="date" id="filter-from"></label><label><span>To date</span><input type="date" id="filter-to"></label><label><span>Service / domain (multi-select)</span><select id="filter-service" multiple size="3" aria-label="Select one or more service domains"><option value="">All services</option></select></label><label><span>Performance metric</span><select id="filter-metric"><option value="">All metrics</option></select></label></div>
+        <div class="filter-foot"><span id="filter-summary">Showing all available records</span><button class="btn btn-primary btn-sm" id="apply-filters">Apply filters</button></div>
+      </div>
+      <div class="kpi-grid">
+        <article class="kpi-card"><div class="kpi-top"><span>Total MTC ridership</span><span class="kpi-icon blue">♟</span></div><strong id="kpi-ridership">—</strong><small id="kpi-ridership-note">MTC · Ridership</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Total revenue</span><span class="kpi-icon green">₹</span></div><strong id="kpi-revenue">—</strong><small>Revenue metrics only</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Pallavaram parking</span><span class="kpi-icon violet">P</span></div><strong id="kpi-pallavaram">—</strong><small>Vehicle count</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Thirumangalam parking</span><span class="kpi-icon orange">T</span></div><strong id="kpi-thirumangalam">—</strong><small>Vehicle count</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Daily average</span><span class="kpi-icon blue">↗</span></div><strong id="kpi-average">—</strong><small id="kpi-average-note">Selected metric</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Highest day</span><span class="kpi-icon green">↑</span></div><strong id="kpi-high">—</strong><small id="kpi-high-note">Selected metric</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Lowest day</span><span class="kpi-icon orange">↓</span></div><strong id="kpi-low">—</strong><small id="kpi-low-note">Selected metric</small></article>
+        <article class="kpi-card"><div class="kpi-top"><span>Service-wise performance</span><span class="kpi-icon violet">▤</span></div><strong id="kpi-services">—</strong><small>Service daily counts in current filters</small></article>
+      </div>
+      <div class="charts-grid">
+        <article class="panel chart-panel wide"><div class="chart-heading"><div><h3>Daily performance trend</h3><p>Daily values for the selected metric and filters. Hover for exact values.</p></div><span class="chart-tag">TIME SERIES</span></div><div class="chart-box"><canvas id="daily-chart"></canvas></div></article>
+        <article class="panel chart-panel"><div class="chart-heading"><div><h3>Cumulative performance</h3><p>Running total within each month. Hover for exact values.</p></div><span class="chart-tag">CUMULATIVE</span></div><div class="chart-box"><canvas id="cumulative-chart"></canvas></div></article>
+        <article class="panel chart-panel"><div class="chart-heading"><div><h3>Service-wise comparison</h3><p>Totals grouped by service / domain</p></div><span class="chart-tag">COMPARISON</span></div><div class="chart-box"><canvas id="service-chart"></canvas></div></article>
+        <article class="panel chart-panel"><div class="chart-heading"><div><h3>Monthly comparison</h3><p>Monthly totals for the selected metric</p></div><span class="chart-tag">MONTHLY</span></div><div class="chart-box"><canvas id="monthly-chart"></canvas></div></article>
+        <article class="panel chart-panel"><div class="chart-heading"><div><h3>Parking performance</h3><p>Pallavaram vs Thirumangalam vehicle counts</p></div><span class="chart-tag">PARKING</span></div><div class="chart-box"><canvas id="parking-chart"></canvas></div></article>
+        <article class="panel chart-panel"><div class="chart-heading"><div><h3>Revenue and ridership</h3><p>Separate scales and units; no mixed-axis totals</p></div><span class="chart-tag">OVERVIEW</span></div><div class="chart-box"><canvas id="revenue-chart"></canvas></div></article>
+      </div>
+      <div class="panel detail-panel"><div class="panel-heading"><div><h3>Filtered data preview</h3><p>Values currently represented in the dashboard.</p></div><span id="preview-count" class="count-pill">0 records</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Service / Domain</th><th>Metric</th><th>Daily value</th><th>Cumulative</th></tr></thead><tbody id="preview-body"><tr><td colspan="5" class="empty-cell">No matching records.</td></tr></tbody></table></div></div>
+    </section>
+    <footer class="footer">Metro Connect Services · Monthly Performance Monitoring Dashboard <span>Local application · Data saved to Excel</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal-backdrop" id="edit-modal"><div class="modal"><div class="modal-head"><div><h3>Edit record</h3><p>Update the selected record in the central workbook.</p></div><button class="icon-button" id="close-modal">×</button></div><form id="edit-form"><input type="hidden" id="edit-id"><div class="modal-grid"><label><span>Date</span><input type="date" id="edit-date" required></label><label><span>Service / domain</span><input id="edit-service" required></label><label><span>Metric</span><input id="edit-metric" required></label><label><span>Daily value</span><input type="number" id="edit-value" step="any" min="0"></label><label class="full-width"><span>Remarks</span><input id="edit-remarks" maxlength="500"></label></div><div id="edit-message" class="message"></div><div class="modal-actions"><button type="button" class="btn btn-light" id="cancel-modal">Cancel</button><button type="submit" class="btn btn-primary">Update record</button></div></form></div></div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body></html>

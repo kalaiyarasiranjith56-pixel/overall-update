@@ -1,0 +1,68 @@
+{
+  "domains": {
+    "DLF": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    },
+    "DLF Cybercity": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    },
+    "ITPC": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    },
+    "Keppel": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    },
+    "Kosmo One": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    },
+    "MTC": {
+      "enabled": true,
+      "metrics": [
+        "GAP",
+        "Revenue",
+        "Ridership"
+      ]
+    },
+    "Pallavaram parking": {
+      "enabled": true,
+      "metrics": [
+        "Revenue",
+        "Vehicle Count"
+      ]
+    },
+    "SC-GBS": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    },
+    "Thirumangalam Parking": {
+      "enabled": true,
+      "metrics": [
+        "Revenue",
+        "Vehicle Count"
+      ]
+    },
+    "porur parking": {
+      "enabled": true,
+      "metrics": [
+        "Daily"
+      ]
+    }
+  }
+}
